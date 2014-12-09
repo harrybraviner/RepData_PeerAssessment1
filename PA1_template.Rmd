@@ -5,18 +5,61 @@ output:
     keep_md: true
 ---
 
+Reproducible Research: Peer Assessment 1
+========================================
+Harry Braviner
+
 
 ## Loading and preprocessing the data
+
+We unzip the data (if necessary), read it in as a data frame and convert the **date** variable from the *factor* to the *date* datatype.
+
+```{r echo=TRUE}
+if(!file.exists("activity.csv"))
+  unzip("activity.csv")
+data <- read.csv("activity.csv")
+data$date <- as.Date(data[,"date"])
+```
 
 
 
 ## What is mean total number of steps taken per day?
 
+We first compute a vector containing the total number of steps taken each day and produce a histogram (I'm putting a rug under it since I think it adds useful information).
 
+```{r, echo=TRUE, fig.width=7, fig.height=7}
+stepCounts <- by(data$steps, data$date, sum, na.rm=TRUE)
+hist(stepCounts, breaks=10, col = "blue", main = "", xlab = "Total number of steps taken in a day")
+rug(stepCounts)
+```
+
+Now we compute the mean and median steps-per-day.
+
+```{r, echo=TRUE}
+meanSteps <- mean(stepCounts)
+medianSteps <- median(stepCounts)
+```
+
+The mean number of steps-per-day is `r meanSteps` and the median number of steps-per-day is `r medianSteps`.
 
 ## What is the average daily activity pattern?
 
+Create a vector of the averages over all days of the number of steps in each interval.
+The names of this vector correspond to the times.
 
+```{r, echo=TRUE}
+averagedStepsPerInterval <- by(data$steps, data$interval, mean, na.rm=TRUE, simplify=TRUE)
+```
+
+I've changed the labelling of the x-axis to be the actual time, since the interval numbers aren't very nicely formatted (i.e. I think "15:00" is clearer than "1500" as a label for 3pm!)
+
+```{r, echo=TRUE, fig.width=7, fig.height=5}
+plot(names(averagedStepsPerInterval), averagedStepsPerInterval, type="l", col="red",
+      xlab="Time", ylab="Steps in 5 minute interval", xaxt="n",
+      main="Steps per interval averaged over all days")
+axis(side=1, at = c("0", "600", "1200", "1800", "2355"),
+      labels = c("00:00", "06:00", "12:00", "18:00", "23:55"))
+```
 
 ## Imputing missing values
 
