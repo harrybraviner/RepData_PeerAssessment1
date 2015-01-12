@@ -47,6 +47,8 @@ medianSteps <- median(stepCounts)
 
 The mean number of steps-per-day is 9354.2295082 and the median number of steps-per-day is 10395.
 
+Note that this method has treated the NAs are zeros. Only averaging over the days for which all the data is available would give a different mean and median.
+
 ## What is the average daily activity pattern?
 
 Create a vector of the averages over all days of the number of steps in each interval.
@@ -70,7 +72,16 @@ axis(side=1, at = c("0", "600", "1200", "1800", "2355"),
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
-## Inputing missing values
+Calculate interval with the maximum steps:
+
+
+```r
+maxStepInterval <- which.max(averagedStepsPerInterval)[[1]]
+```
+
+The interval containing the maximum number of steps is 104.
+
+## Imputing missing values
 
 
 ```r
@@ -83,7 +94,7 @@ totalMissing
 ```
 So there are 2304 observations where at least one of the variables is missing.
 
-As an aside, we can see from the fact that the next bit of code that all of these NAs are in the **steps** variables;
+As an aside, we can see from the next bit of code that all of these NAs are in the **steps** variables;
 no observations of the **date** or **interval** have been coded as NA.
 
 ```r
@@ -108,7 +119,7 @@ This is convenient, since I computed a vector of such values in the previous sec
 
 ```r
 # Note that this makes a copy of the data frame
-# (unlike a data table, where we're just create a reference)
+# (unlike a data table, where we'd just create a reference)
 dataWithMeans <- data
 # Now loop through the rows replacing the steps entry with the mean
 # value as necessary
@@ -155,6 +166,29 @@ averagedStepsPerInterval["45"]
 ```
 So this has indeed replaced NAs with values from the vector of means.
 
+We compute a histogram of the total number of steps taken each day, using this new data with imputed values:
+
+```r
+stepCountsWithMeans <- by(dataWithMeans$steps, dataWithMeans$date, sum, na.rm=TRUE)
+hist(stepCountsWithMeans, breaks=10, col = "blue", main = "", xlab = "Total number of steps taken in a day")
+rug(stepCountsWithMeans)
+```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
+
+Now we compute the mean and median steps-per-day, using the data with imputed values:
+
+
+```r
+meanStepsWithMeans <- mean(stepCountsWithMeans)
+medianStepsWithMeans <- median(stepCountsWithMeans)
+```
+
+The mean number of steps-per-day is 10766.19 and the median number of steps-per-day is 10766.19.
+These both differ from the values we found from the data ignoring the NAs, and are the same as each other!
+This isn't surprising: the values with which we've filled in the blanks are the means for *that five-minute interval*, which will change the mean number of steps-per-day.
+A lot of days have entirely missing data, and these are filled in with 10766.19 steps from the five-minute averages.
+This value appears a lot, and so it isn't surprising that the median falls in here.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -212,4 +246,4 @@ text("0300", 200, "Weekday", font=2)
 mtext("Time", side=1, outer=TRUE, line=3)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png) 
