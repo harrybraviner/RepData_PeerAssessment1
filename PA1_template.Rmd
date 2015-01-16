@@ -16,7 +16,7 @@ We unzip the data (if necessary), read it in as a data frame and convert the **d
 
 ```{r echo=TRUE}
 if(!file.exists("activity.csv"))
-  unzip("activity.csv")
+  unzip("activity.zip")
 data <- read.csv("activity.csv")
 data$date <- as.Date(data[,"date"])
 ```
@@ -66,10 +66,10 @@ axis(side=1, at = c("0", "600", "1200", "1800", "2355"),
 Calculate interval with the maximum steps:
 
 ```{r, echo = TRUE}
-maxStepInterval <- which.max(averagedStepsPerInterval)[[1]]
+maxStepInterval <- data$interval[which.max(averagedStepsPerInterval)[[1]]]
 ```
 
-The interval containing the maximum number of steps is `r maxStepInterval`.
+The five-minute interval containing the maximum number of steps is `r maxStepInterval`.
 
 ## Imputing missing values
 

@@ -210,7 +210,7 @@ hr {
 <p>We unzip the data (if necessary), read it in as a data frame and convert the <strong>date</strong> variable from the <em>factor</em> to the <em>date</em> datatype.</p>
 
 <pre><code class="r">if(!file.exists(&quot;activity.csv&quot;))
-  unzip(&quot;activity.csv&quot;)
+  unzip(&quot;activity.zip&quot;)
 data &lt;- read.csv(&quot;activity.csv&quot;)
 data$date &lt;- as.Date(data[,&quot;date&quot;])
 </code></pre>
@@ -257,10 +257,10 @@ axis(side=1, at = c(&quot;0&quot;, &quot;600&quot;, &quot;1200&quot;, &quot;1800
 
 <p>Calculate interval with the maximum steps:</p>
 
-<pre><code class="r">maxStepInterval &lt;- which.max(averagedStepsPerInterval)[[1]]
+<pre><code class="r">maxStepInterval &lt;- data$interval[which.max(averagedStepsPerInterval)[[1]]]
 </code></pre>
 
-<p>The interval containing the maximum number of steps is 104.</p>
+<p>The five-minute interval containing the maximum number of steps is 835.</p>
 
 <h2>Imputing missing values</h2>
 
